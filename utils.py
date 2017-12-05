@@ -1,14 +1,24 @@
-import sys
 import numpy as np
 import tensorflow as tf
 import random
-import pickle
+import _pickle as pkl
 import matplotlib.pyplot as plt
 from pylab import rcParams
 import scipy
 import scipy.stats as stats
 config_gpu = tf.ConfigProto()
 config_gpu.gpu_options.allow_growth = True
+
+def dataReader():
+    X = np.zeros((100,227,227,3))
+    y = np.zeros(100)
+    for num in range(5):
+        with open("./ImagenetValidationSamples/imagenet_sample_{}.pkl".format(num),"rb") as inputs:
+            dic_temp = pkl.load(inputs)
+            X[num*20:num*20+20] = dic_temp["X"]
+            y[num*20:num*20+20] = dic_temp["y"]
+            labels = dic_temp["labels"]
+    return X, y.astype(int), labels
 
 
 class SimpleGradientAttack(object):
@@ -413,22 +423,6 @@ def back_maxpool(m, layer, shatranj=33):
     out = tf.stack(lst, axis=-1)
     return out
 
-
-import sys
-sys.path.append("..")
-import numpy as np
-import tensorflow as tf
-import random
-import pickle
-import matplotlib.pyplot as plt
-from pylab import rcParams
-from tqdm import tqdm_notebook as tqdm
-import scipy
-import scipy.stats as stats
-config_gpu = tf.ConfigProto()
-config_gpu.gpu_options.allow_growth = True
-import PIL.Image
-import sklearn.decomposition
 
 class DeepLIFTAttack(object):
     
